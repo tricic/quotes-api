@@ -29,11 +29,10 @@ class QuoteController extends Controller
         $request->validate([
             'quote' => 'required',
             'author' => 'max:255',
-            'category' => 'max:64',
-            'user_id' => 'integer'
+            'category' => 'max:64'
         ]);
 
-        $quote = Quote::create($request->all());
+        $quote = Quote::create($request->all() + ['user_id' => $request->user()->id]);
 
         return response([
             'message' => 'Success.',
@@ -66,8 +65,7 @@ class QuoteController extends Controller
         $request->validate([
             'quote' => 'required',
             'author' => 'max:255',
-            'category' => 'max:64',
-            'user_id' => 'integer'
+            'category' => 'max:64'
         ]);
 
         $quote->update($request->all());
