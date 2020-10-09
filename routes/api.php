@@ -23,4 +23,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/quote/random', [QuoteController::class, 'random']);
 Route::apiResource('/quote', QuoteController::class);

@@ -12,7 +12,7 @@ class QuoteController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api')->except('index', 'show');
+        // $this->middleware('auth:api')->except('index', 'show');
     }
 
     /**
@@ -61,6 +61,18 @@ class QuoteController extends Controller
      */
     public function show(Quote $quote)
     {
+        return response([
+            'message' => 'Success.',
+            'data' => new QuoteResource($quote)
+        ]);
+    }
+
+    public function random(Request $request)
+    {
+        $quote = $request->has('category') ?
+            Quote::where('category', $request->category)->inRandomOrder()->firstOrFail()
+            : Quote::inRandomOrder()->firstOrFail();
+
         return response([
             'message' => 'Success.',
             'data' => new QuoteResource($quote)
