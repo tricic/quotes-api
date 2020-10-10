@@ -39,7 +39,7 @@ class QuoteController extends Controller
         return response([
             'message' => 'Success.',
             'data' => new QuoteResource($quote)
-        ]);
+        ], 201);
     }
 
     public function show(Quote $quote): Response
