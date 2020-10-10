@@ -12,6 +12,7 @@ class QuotesApiTest extends TestCase
     use WithFaker;
 
     const API_PATH = '/api/v1/quote';
+    const AUTH_DRIVER = 'api';
 
     private $sampleUser;
     private $sampleQuote;
@@ -43,7 +44,7 @@ class QuotesApiTest extends TestCase
 
     public function testCreateAQuote(): void
     {
-        $this->actingAs($this->sampleUser, 'api')
+        $this->actingAs($this->sampleUser, self::AUTH_DRIVER)
             ->postJson(self::API_PATH, [
                 'quote' => $this->faker->sentence,
                 'author' => $this->faker->name,
@@ -54,7 +55,7 @@ class QuotesApiTest extends TestCase
 
     public function testUpdateAQuote(): void
     {
-        $this->actingAs($this->sampleUser, 'api')
+        $this->actingAs($this->sampleUser, self::AUTH_DRIVER)
             ->putJson(self::API_PATH . "/{$this->sampleQuote->id}", [
                 'quote' => $this->faker->sentence,
                 'author' => $this->faker->name,
@@ -62,7 +63,7 @@ class QuotesApiTest extends TestCase
             ])
             ->assertOk();
 
-        $this->actingAs($this->sampleUser, 'api')
+        $this->actingAs($this->sampleUser, self::AUTH_DRIVER)
             ->patchJson(self::API_PATH . "/{$this->sampleQuote->id}", [
                 'quote' => $this->faker->sentence,
                 'author' => $this->faker->name,
@@ -73,8 +74,26 @@ class QuotesApiTest extends TestCase
 
     public function testDeleteAQuote(): void
     {
-        $this->actingAs($this->sampleUser, 'api')
+        $this->actingAs($this->sampleUser, self::AUTH_DRIVER)
             ->deleteJson(self::API_PATH . "/{$this->sampleQuote->id}")
             ->assertOk();
+    }
+
+    public function testNotFoundRequests(): void
+    {
+        $this->getJson(self::API_PATH . '/-1')->assertNotFound();
+        $this->actingAs($this->sampleUser, self::AUTH_DRIVER)
+            ->putJson(self::API_PATH . '/-1')
+            ->assertNotFound();
+        $this->actingAs($this->sampleUser, self::AUTH_DRIVER)
+            ->deleteJson(self::API_PATH . '/-1')
+            ->assertNotFound();
+    }
+
+    public function testUnauthorizedRequests(): void
+    {
+        $this->postJson(self::API_PATH)->assertUnauthorized();
+        $this->putJson(self::API_PATH . '/1')->assertUnauthorized();
+        $this->deleteJson(self::API_PATH . '/1')->assertUnauthorized();
     }
 }
