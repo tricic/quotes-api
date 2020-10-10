@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class QuoteController extends Controller
 {
@@ -14,7 +15,7 @@ class QuoteController extends Controller
         $this->middleware('auth:api')->except('index', 'show', 'random');
     }
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $quotes = empty($request->category) ? Quote::all()
             : Quote::where('category', $request->category)->get();
@@ -25,7 +26,7 @@ class QuoteController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): Response
     {
         $request->validate([
             'quote' => 'required',
@@ -41,7 +42,7 @@ class QuoteController extends Controller
         ]);
     }
 
-    public function show(Quote $quote)
+    public function show(Quote $quote): Response
     {
         return response([
             'message' => 'Success.',
@@ -49,7 +50,7 @@ class QuoteController extends Controller
         ]);
     }
 
-    public function random(Request $request)
+    public function random(Request $request): Response
     {
         $quote = empty($request->category) ? Quote::inRandomOrder()->firstOrFail()
             : Quote::where('category', $request->category)->inRandomOrder()->firstOrFail();
@@ -60,7 +61,7 @@ class QuoteController extends Controller
         ]);
     }
 
-    public function update(Request $request, Quote $quote)
+    public function update(Request $request, Quote $quote): Response
     {
         $request->validate([
             'quote' => 'required',
@@ -76,7 +77,7 @@ class QuoteController extends Controller
         ]);
     }
 
-    public function destroy(Quote $quote)
+    public function destroy(Quote $quote): Response
     {
         $quote->delete();
 
