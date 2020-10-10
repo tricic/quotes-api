@@ -14,9 +14,10 @@ class QuoteController extends Controller
         $this->middleware('auth:api')->except('index', 'show', 'random');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $quotes = Quote::all();
+        $quotes = empty($request->category) ? Quote::all()
+            : Quote::where('category', $request->category)->get();
 
         return response([
             'message' => 'Success.',
@@ -50,9 +51,8 @@ class QuoteController extends Controller
 
     public function random(Request $request)
     {
-        $quote = $request->has('category') ?
-            Quote::where('category', $request->category)->inRandomOrder()->firstOrFail()
-            : Quote::inRandomOrder()->firstOrFail();
+        $quote = empty($request->category) ? Quote::inRandomOrder()->firstOrFail()
+            : Quote::where('category', $request->category)->inRandomOrder()->firstOrFail();
 
         return response([
             'message' => 'Success.',
