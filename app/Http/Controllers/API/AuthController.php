@@ -51,4 +51,14 @@ class AuthController extends Controller
             'access_token' => $accessToken
         ]);
     }
+
+    public function logout(Request $request): Response
+    {
+        $token = $request->user('api')->token();
+        $token->revoke();
+
+        return response([
+            'message' => 'Success.'
+        ]);
+    }
 }
