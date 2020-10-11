@@ -6,18 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:55',
-            'email' => 'email|required|unique:users',
-            'password' => 'required|confirmed'
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed'
         ]);
 
         $validatedData['password'] = Hash::make($request->password);
+        $validatedData['remember_token'] = Str::random(10);
 
         $user = User::create($validatedData);
 
@@ -36,7 +38,8 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if (!auth()->attempt($loginData)) {
+        if (!auth()->attempt($loginData))
+        {
             return response(['message' => 'Invalid Credentials']);
         }
 
