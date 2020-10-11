@@ -11,6 +11,11 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api')->only('logout');
+    }
+
     public function register(Request $request): Response
     {
         $validatedData = $request->validate([
@@ -44,7 +49,7 @@ class AuthController extends Controller
             return response(['message' => 'Invalid Credentials']);
         }
 
-        $accessToken = auth()->user()->createToken('authToken')->accessToken;
+        $accessToken = $request->user()->createToken('authToken')->accessToken;
 
         return response([
             'user' => auth()->user(),
