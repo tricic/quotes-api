@@ -12,8 +12,15 @@ class QuoteResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'quote' => $this->quote,
+            'author' => $this->author,
+            'category' => $this->category,
+            'added_at' => $this->created_at
+        ];
     }
 }
