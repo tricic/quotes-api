@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -17,8 +18,7 @@ class QuoteController extends Controller
 
     public function index(Request $request): Response
     {
-        $quotes = empty($request->category) ? Quote::all()
-            : Quote::where('category', $request->category)->get();
+        $quotes = $this->queryBuilder($request)->get();
 
         return response([
             'message' => 'Success.',
@@ -52,8 +52,7 @@ class QuoteController extends Controller
 
     public function random(Request $request): Response
     {
-        $quote = empty($request->category) ? Quote::inRandomOrder()->firstOrFail()
-            : Quote::where('category', $request->category)->inRandomOrder()->firstOrFail();
+        $quote = $this->queryBuilder($request)->inRandomOrder()->firstOrFail();
 
         return response([
             'message' => 'Success.',
@@ -84,5 +83,22 @@ class QuoteController extends Controller
         return response([
             'message' => 'Success.'
         ]);
+    }
+
+    protected function queryBuilder(Request $request): Builder
+    {
+        $query = Quote::query();
+
+        if (!empty($request->category))
+        {
+            $query->where('category', $request->category);
+        }
+
+        if (!empty($request->author))
+        {
+            $query->where('author', $request->author);
+        }
+
+        return $query;
     }
 }
