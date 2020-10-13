@@ -22,6 +22,7 @@ class QuoteController extends Controller
 
         return response([
             'message' => 'Success.',
+            'count' => count($quotes),
             'data' => QuoteResource::collection($quotes)
         ]);
     }
